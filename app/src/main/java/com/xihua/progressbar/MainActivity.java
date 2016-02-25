@@ -14,6 +14,7 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
+    private int progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                progress = 0;
             }
         });
         progressBar = (ProgressBar) findViewById(R.id.progrssbar);
@@ -50,10 +52,12 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         new Thread() {
-            int progress = 0;
             @Override
             public void run() {
-                while (progress <= 100) {
+                while (true) {
+                    if (progress > 100) {
+                        continue;
+                    }
                     progress++;
                     Message message = handler.obtainMessage(0);
                     message.arg1 = progress;

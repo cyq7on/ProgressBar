@@ -26,11 +26,10 @@ public class ProgressBar extends View {
     private Paint paint,circlePaint,textPaint,textCirclePaint;
     private float progress;
     private RectF rect;
-    private float cX,cY;
-    private int radius;
+    private float cX,cY,scY;
+    private float radius,sRadius;
     private int width,height;
     private float textOffsetY;
-    private static final float CIRCLE_RATIO = 1F / 6;
 
     public ProgressBar(Context context) {
         this(context, null, 0);
@@ -59,7 +58,7 @@ public class ProgressBar extends View {
 
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
         textPaint.setColor(Color.RED);
-        textPaint.setTextSize(50);
+        textPaint.setTextSize(20);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textOffsetY = (textPaint.descent() + textPaint.ascent()) / 2;
         textCirclePaint = new Paint(paint);
@@ -88,12 +87,17 @@ public class ProgressBar extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         cX = w / 2;
         cY = h / 2;
+        sRadius = 1F / 5 * radius;
+        //这里还有疑问
+        scY = - radius + sRadius + 10;
         rect = new RectF(cX - radius, cX - radius, cX + radius, cX + radius);
         paint.setColor(arcColor);
         circlePaint.setColor(circleColor);
         paint.setStrokeWidth(circleWidth);
         circlePaint.setStrokeWidth(circleWidth);
-        Log.i("onSizeChanged",radius + "");
+        Log.e("cY", cY + "");
+        Log.e("scY", scY + "");
+        Log.e("radius", radius + "");
     }
 
 
@@ -109,7 +113,7 @@ public class ProgressBar extends View {
 
         switch (widthMode) {
             case MeasureSpec.AT_MOST:
-                width = radius * 2 + circleWidth;
+                width = (int) (radius * 2 + circleWidth);
                 break;
             case MeasureSpec.EXACTLY:
                 width = widthSize;
@@ -118,7 +122,7 @@ public class ProgressBar extends View {
         }
         switch (heightMode) {
             case MeasureSpec.AT_MOST:
-                height = radius * 2 + circleWidth;
+                height = (int) (radius * 2 + circleWidth);
                 break;
             case MeasureSpec.EXACTLY:
                 height = heightSize;
@@ -143,17 +147,20 @@ public class ProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float angle  = progress * 360 / 100;
-        float scX = cX + (radius * (1 - CIRCLE_RATIO) - circleWidth );
-        float scY = cY - (radius * (1 - CIRCLE_RATIO) - circleWidth );
+        float angle = progress * 360 / 100;
         canvas.drawCircle(cX, cY, radius, circlePaint);
         canvas.drawArc(rect, -90, angle, false, paint);
         canvas.save();
-        canvas.translate(cX,cY);
+        canvas.translate(cX, cY);
         canvas.rotate(angle);
-        canvas.drawCircle(0, -scY, CIRCLE_RATIO * radius, textCirclePaint);
+        canvas.drawCircle(0, scY, sRadius, textCirclePaint);
+
+        canvas.translate(0,scY);
+        canvas.rotate(-angle);
+        canvas.drawText(String.format("%d%%",(int)progress),0,0 - textOffsetY,textPaint);
+        
         canvas.restore();
-        Log.i("onDraw",angle + "");
+        Log.i("onDraw", angle + "");
     }
 
     public void setArcColor(int arcColor) {
