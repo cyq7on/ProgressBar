@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,12 +23,14 @@ public class ProgressBar extends View {
     private int arcColor;
     private int circleColor;
     private int circleWidth;
-    private Paint paint,circlePaint;
+    private Paint paint,circlePaint,textPaint,textCirclePaint;
     private float progress;
     private RectF rect;
     private float cX,cY;
     private int radius;
     private int width,height;
+    private float textOffsetY;
+    private static final float CIRCLE_RATIO = 1F / 6;
 
     public ProgressBar(Context context) {
         this(context, null, 0);
@@ -53,6 +56,16 @@ public class ProgressBar extends View {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         paint.setStyle(Paint.Style.STROKE);
         circlePaint = new Paint(paint);
+
+        textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
+        textPaint.setColor(Color.RED);
+        textPaint.setTextSize(50);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textOffsetY = (textPaint.descent() + textPaint.ascent()) / 2;
+        textCirclePaint = new Paint(paint);
+        textCirclePaint.setStrokeWidth(10);
+        textCirclePaint.setColor(0xFF16A3FA);
+
 //        new Thread() {
 //            private int progress;
 //            @Override
@@ -112,16 +125,35 @@ public class ProgressBar extends View {
 //                radius = Math.min(width / 2,height / 2);
                 break;
         }
-        setMeasuredDimension(width,height);
+        setMeasuredDimension(width, height);
         Log.i("onMeasure",radius + "");
     }
 
+//    @Override
+//    protected void onDraw(Canvas canvas) {
+//        super.onDraw(canvas);
+//        float angle  = progress * 360 / 100;
+//        float scX = (float) (cX + (radius * (1 - CIRCLE_RATIO) - circleWidth ) * Math.sin(angle));
+//        float scY = (float) (cY - (radius * (1 - CIRCLE_RATIO) - circleWidth ) * Math.cos(angle));
+//        canvas.drawCircle(cX, cY, radius, circlePaint);
+//        canvas.drawArc(rect, -90, angle, false, paint);
+//        canvas.drawCircle(scX,scY,CIRCLE_RATIO * radius,textCirclePaint);
+//        Log.i("onDraw",angle + "");
+//    }
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        float angle  = progress * 360 / 100;
+        float scX = cX + (radius * (1 - CIRCLE_RATIO) - circleWidth );
+        float scY = cY - (radius * (1 - CIRCLE_RATIO) - circleWidth );
         canvas.drawCircle(cX, cY, radius, circlePaint);
-        canvas.drawArc(rect, -90, progress * 360 / 100, false, paint);
-        Log.i("onDraw",progress * 360 / 100 + "");
+        canvas.drawArc(rect, -90, angle, false, paint);
+        canvas.save();
+        canvas.translate(cX,cY);
+        canvas.rotate(angle);
+        canvas.drawCircle(0, -scY, CIRCLE_RATIO * radius, textCirclePaint);
+        canvas.restore();
+        Log.i("onDraw",angle + "");
     }
 
     public void setArcColor(int arcColor) {

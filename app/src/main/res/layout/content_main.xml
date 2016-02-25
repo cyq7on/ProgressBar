@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         app:circleWidth="20dp"
-        app:radius="100dp"
+        app:radius="120dp"
         app:arcColor="#16A3FA"
         app:circleColor="#D20F02" />
 </RelativeLayout>
