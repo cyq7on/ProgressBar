@@ -58,7 +58,7 @@ public class ProgressBar extends View {
 
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
         textPaint.setColor(Color.RED);
-        textPaint.setTextSize(20);
+        textPaint.setTextSize(30);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textOffsetY = (textPaint.descent() + textPaint.ascent()) / 2;
         textCirclePaint = new Paint(paint);
@@ -120,16 +120,16 @@ public class ProgressBar extends View {
                 radius = (width - circleWidth) / 2;
                 break;
         }
-        switch (heightMode) {
-            case MeasureSpec.AT_MOST:
-                height = (int) (radius * 2 + circleWidth);
-                break;
-            case MeasureSpec.EXACTLY:
-                height = heightSize;
+//        switch (heightMode) {
+//            case MeasureSpec.AT_MOST:
+//                height = (int) (radius * 2 + circleWidth);
+//                break;
+//            case MeasureSpec.EXACTLY:
+//                height = heightSize;
 //                radius = Math.min(width / 2,height / 2);
-                break;
-        }
-        setMeasuredDimension(width, height);
+//                break;
+//        }
+        setMeasuredDimension(width, width);
         Log.i("onMeasure",radius + "");
     }
 
@@ -158,7 +158,7 @@ public class ProgressBar extends View {
         canvas.translate(0,scY);
         canvas.rotate(-angle);
         canvas.drawText(String.format("%d%%",(int)progress),0,0 - textOffsetY,textPaint);
-        
+
         canvas.restore();
         Log.i("onDraw", angle + "");
     }
