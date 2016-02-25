@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="arcColor" format="color"/>
+    <attr name="circleColor" format="color" />
+    <attr name="circleWidth" format="dimension" />
+    <attr name="radius" format="dimension" />
+    <declare-styleable name="ProgressBar">
+        <attr name="arcColor"/>
+        <attr name="circleColor"/>
+        <attr name="circleWidth"/>
+        <attr name="radius"/>
+    </declare-styleable>
+</resources>

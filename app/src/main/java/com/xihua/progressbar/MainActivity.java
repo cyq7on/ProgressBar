@@ -1,15 +1,19 @@
 package com.xihua.progressbar;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,42 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        progressBar = (ProgressBar) findViewById(R.id.progrssbar);
+        progressBar.setArcColor(Color.GREEN);
+        progressBar.setCircleColor(Color.BLUE);
+        progressBar.setCircleWidth(20);
+        //创建一个Handler
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                //处理消息
+                switch (msg.what) {
+                    case 0:
+                        progressBar.setProgress(msg.arg1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        new Thread() {
+            int progress = 0;
+            @Override
+            public void run() {
+                while (progress <= 100) {
+                    progress++;
+                    Message message = handler.obtainMessage(0);
+                    message.arg1 = progress;
+                    handler.sendMessage(message);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override

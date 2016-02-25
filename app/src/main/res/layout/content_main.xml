@@ -12,8 +12,13 @@
     tools:context="com.xihua.progressbar.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <com.xihua.progressbar.ProgressBar
+        android:id="@+id/progrssbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_centerInParent="true"
+        app:circleWidth="20dp"
+        app:radius="100dp"
+        app:arcColor="#16A3FA"
+        app:circleColor="#D20F02" />
 </RelativeLayout>
