@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setArcColor(Color.GREEN);
         progressBar.setCircleColor(Color.BLUE);
         progressBar.setCircleWidth(20);
+//        progressBar.setRadius(120);
         //创建一个Handler
         final Handler handler = new Handler(){
             @Override

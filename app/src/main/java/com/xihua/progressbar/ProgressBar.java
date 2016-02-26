@@ -20,15 +20,20 @@ import android.view.View;
  * @date 2016/2/259:42
  */
 public class ProgressBar extends View {
+    //弧形颜色
     private int arcColor;
+    //大圆颜色
     private int circleColor;
+    //大圆宽度
     private int circleWidth;
-    private Paint paint,circlePaint,textPaint,textCirclePaint;
+    //弧形画笔，大圆画笔，文本画笔，文本圆画笔
+    private Paint arcPaint,circlePaint,textPaint,textCirclePaint;
     private float progress;
     private RectF rect;
+    //大圆圆心横坐标，纵坐标，文本圆纵坐标
     private float cX,cY,scY;
+    //大圆半径，文本圆半径
     private float radius,sRadius;
-    private int width,height;
     private float textOffsetY;
 
     public ProgressBar(Context context) {
@@ -52,34 +57,18 @@ public class ProgressBar extends View {
                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                         100, getResources().getDisplayMetrics()));
         a.recycle();
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-        paint.setStyle(Paint.Style.STROKE);
-        circlePaint = new Paint(paint);
+        arcPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        arcPaint.setStyle(Paint.Style.STROKE);
+        circlePaint = new Paint(arcPaint);
 
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
         textPaint.setColor(Color.RED);
         textPaint.setTextSize(30);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textOffsetY = (textPaint.descent() + textPaint.ascent()) / 2;
-        textCirclePaint = new Paint(paint);
+        textCirclePaint = new Paint(arcPaint);
         textCirclePaint.setStrokeWidth(10);
         textCirclePaint.setColor(0xFF16A3FA);
-
-//        new Thread() {
-//            private int progress;
-//            @Override
-//            public void run() {
-//                while (progress < 100) {
-//                    progress += 2;
-//                    setProgress(progress);
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }.start();
     }
 
     @Override
@@ -91,9 +80,9 @@ public class ProgressBar extends View {
         //这里还有疑问
         scY = - radius + sRadius + 10;
         rect = new RectF(cX - radius, cX - radius, cX + radius, cX + radius);
-        paint.setColor(arcColor);
+        arcPaint.setColor(arcColor);
         circlePaint.setColor(circleColor);
-        paint.setStrokeWidth(circleWidth);
+        arcPaint.setStrokeWidth(circleWidth);
         circlePaint.setStrokeWidth(circleWidth);
         Log.e("cY", cY + "");
         Log.e("scY", scY + "");
@@ -113,11 +102,10 @@ public class ProgressBar extends View {
 
         switch (widthMode) {
             case MeasureSpec.AT_MOST:
-                width = (int) (radius * 2 + circleWidth);
+                widthSize = (int) (radius * 2 + circleWidth);
                 break;
             case MeasureSpec.EXACTLY:
-                width = widthSize;
-                radius = (width - circleWidth) / 2;
+                radius = (widthSize - circleWidth) / 2;
                 break;
         }
 //        switch (heightMode) {
@@ -129,27 +117,15 @@ public class ProgressBar extends View {
 //                radius = Math.min(width / 2,height / 2);
 //                break;
 //        }
-        setMeasuredDimension(width, width);
-        Log.i("onMeasure",radius + "");
+        setMeasuredDimension(widthSize, widthSize);
     }
 
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//        float angle  = progress * 360 / 100;
-//        float scX = (float) (cX + (radius * (1 - CIRCLE_RATIO) - circleWidth ) * Math.sin(angle));
-//        float scY = (float) (cY - (radius * (1 - CIRCLE_RATIO) - circleWidth ) * Math.cos(angle));
-//        canvas.drawCircle(cX, cY, radius, circlePaint);
-//        canvas.drawArc(rect, -90, angle, false, paint);
-//        canvas.drawCircle(scX,scY,CIRCLE_RATIO * radius,textCirclePaint);
-//        Log.i("onDraw",angle + "");
-//    }
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         float angle = progress * 360 / 100;
         canvas.drawCircle(cX, cY, radius, circlePaint);
-        canvas.drawArc(rect, -90, angle, false, paint);
+        canvas.drawArc(rect, -90, angle, false, arcPaint);
         canvas.save();
         canvas.translate(cX, cY);
         canvas.rotate(angle);
@@ -175,6 +151,9 @@ public class ProgressBar extends View {
         this.circleWidth = circleWidth;
     }
 
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
 
     public void setProgress(int progress) {
         if (progress > 100) {
